@@ -58,6 +58,7 @@
     "node-periodic-table": "^0.0.6",
     "node-telegram-bot-api": "^0.61.0",
     "node-youtube-music": "^0.10.3",
+    "openai": "^3.3.0",
     "path": "^0.12.7",
     "pino": "^8.11.0",
     "ptable": "^0.0.3",
