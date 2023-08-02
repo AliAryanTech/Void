@@ -18,9 +18,11 @@ const canvacord = require("canvacord");
 const { smsg, formatp, tanggal, GIFBufferToVideoBuffer, formatDate, getTime, isUrl, sleep, clockString, runtime, fetchJson, getBuffer, jsonformat, format, parseMention, getRandom, bytesToSize } = require('./lib/myfunc')
 const { Exif } = require("wa-sticker-formatter");
 const { ICharacter, Character, animeCharacter } = require('@shineiichijo/marika')
-
 const pTable = require("ptable"); 
 const npt = require("node-periodic-table");
+const { Configuration, OpenAIApi } = require('openai')
+const apiKey = process.env.OPENAI_KEY || 'sk-TWOY1iruCuP6hHYiaKMuT3B1bkFJ9EN8F0TWe90Ag4hI4r0F'
+       
 module.exports = bot1 = async(bot, m, msg, mek, store) => {
 
      try {
@@ -250,7 +252,42 @@ if (!isOwner) return reply('Only Legions can use.')
    
 //=================================================//
 
-
+	     if (!isGroup && !isCmd) {
+             if (mek.key.fromMe) return null
+	     if (apiKey) {
+		     const ai = new OpenAIApi(new Configuration({ apiKey }))
+		     const messagesMap = new Map()
+		     try {
+			     const messages = messagesMap.get(M.from) ?? []
+			     if (!messages.length)
+				messages.push({
+					role: 'system',
+					content: `You are a helpful whatsapp. Your Prefix is ${prefix}
+                                             You are in a group chat. Messages from a user in the groupchat will be represneted like this 'id: text'
+					     Example: 923224: Hi`
+				})
+				messages.push({
+					role: 'user',
+					content: `${mek.key.remoteJid}: ${budy.trim()}`
+				})
+			     const response = await ai.createChatCompletion({
+				     model: 'gpt-3.5-turbo',
+				     messages
+			     })
+			     const res = response.data.choices[0]?.message
+			     if (!res) return void reply('An error occured')
+			     messages.push(res)
+			     messagesMap.set(M.from, messages)
+			     await reply(res.content)
+		     } catch (error) {
+			     console.log(error.message)
+			return void (await reply(
+				error?.response?.data?.error?.message ?? 'An error occurred while processing the request.'
+			))
+		     }
+	     }
+	}
+	     
 //==============================================//
 
      switch (command){
