@@ -1203,61 +1203,32 @@ if (!isGroupAdmins) return reply(" This command can only be used by group admins
     reply('*Group Description Changed successfuly*')
     }
     break 
-
-case 'sgif': case 'sticker': case 's': {
-
-  if(!quoted) return await client.sendMessage(m.from,{text:"Reply/tag a image/video"})
-       flags.forEach((flag) => (text = text.replace(flag, '')))
- 
-       pack = 'VOID'
-       author = 'Lexis'
-        
-       
-           
-        if (/image/.test(mime)) {
-    
-            let media = await quoted.download()
-       
-        let sticker = new Sticker(media, {
-            pack: pack, // The pack name
-            author: author, // The author name
-            type: flags.includes('--c') || flags.includes('--crop') || flags.includes('--cropped')
-            ? 'crop'
-            : flags.includes('--s') || flags.includes('--stretch') || flags.includes('--stretched')
-            ? 'default'
-            : flags.includes('--circle')
-            ? 'circle'
-            : 'full' ,
-            categories: ['🤩', '🎉'], // The sticker category
-            id: '12345', // The sticker id
-            quality: 75, // The quality of the output file
-            background: 'transparent' // The sticker background color (only for full stickers)
-        })
-       
-        const buffer = await sticker.toBuffer()
-        bot.sendMessage(m.from, {sticker: buffer}, {quoted: m})
-    
-        } else if (/video/.test(mime)) {
-            if ((quoted.msg || quoted).seconds > 20) return client.sendMessage(m.from,{text:'🕐 Cannot fetch videos longer than *11 Seconds*'})
-            let media = await quoted.download()
-        let sticker = new Sticker(media, {
-            pack: pack, // The pack name
-            author: author, // The author name
-            type: body.includes("#c")|| body.includes("#crop")? StickerTypes.CROPPED: StickerTypes.FULL, // The sticker type
-            categories: ['🤩', '🎉'], // The sticker category
-            id: '12345', // The sticker id
-            quality: 30, // The quality of the output file
-            background: 'transparent' // The sticker background color (only for full stickers)
-        })
-    
-        const stikk = await sticker.toBuffer()
-    
-    
-        bot.sendMessage(m.from, {sticker: stikk}, {quoted: m})
-        } else {
-            bot.sendMessage(m.from,{text:"❌ Could not find any Image/Video in context"},{quoted:m})
-            }
-            break
+	     case 'sticker': case 's': {
+		     const video = quoted?.type === 'videoMessage'
+		     if (!quoted && (quoted.type !== 'imageMessage' || !video))
+			return reply('Quote an image/video/gif message')
+		     if ((quoted).seconds > 10)
+			return reply('Please send video less than 10 seconds')
+		     const pack = text.replace(/--\w+(\s|$)/g, '').replace(/--\w+/, '').split('|')
+		     const flags = text.match(/--\w+/g) || []
+		     const buffer = await quoted.download()
+		     const sticker = await new Sticker(buffer, {
+			     pack: pack[1]?.trim() || 'Void-Bot By',
+			     author: pack[2]?.trim() || 'Lexis',
+			     categories: ['🤩', '🎉'],
+			     quality: video ? 10 : 70,
+			     type: flags.includes('--c') || flags.includes('--crop') || flags.includes('--cropped')
+				     ? 'crop'
+				     : flags.includes('--s') || flags.includes('--stretch') || flags.includes('--stretched')
+				     ? 'default'
+				     : flags.includes('--circle')
+				     ? 'circle'
+				     : 'full'
+		     }).build()
+		     await bot.sendMessage(m.from, { sticker }, { quoted: m })
+	     }
+	break
+	     
 case 'couple': case 'ship': {
 	
 let member = participants.map(u => u.id)
