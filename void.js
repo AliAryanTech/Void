@@ -281,7 +281,7 @@ if (!isGroup && !isCmd){
                 const ai = new OpenAIApi(new Configuration({ apiKey }))
                 const messagesMap = new Map()
                 try {
-                    const messages = messagesMap.get(M.from) ?? []
+                    const messages = messagesMap.get(from) ?? []
                     if (!messages.length)
                         messages.push({
                             role: 'system',
@@ -291,7 +291,7 @@ if (!isGroup && !isCmd){
                         })
                     messages.push({
                         role: 'user',
-                        content: `${mek.key.remoteJid}: ${budy.trim()}`
+                        content: `${sender}: ${budy.trim()}`
                     })
                     const response = await ai.createChatCompletion({
                         model: 'gpt-3.5-turbo',
@@ -300,7 +300,7 @@ if (!isGroup && !isCmd){
                     const res = response.data.choices[0]?.message
                     if (!res) return void reply('An error occured')
                     messages.push(res)
-                    messagesMap.set(M.from, messages)
+                    messagesMap.set(from, messages)
                     await reply(res.content)
                 } catch (error) {
                     console.log(error.message)
@@ -1367,7 +1367,7 @@ let buttons = [
                                 ? 'circle'
                                 : 'full'
                     }).build()
-                    await bot.sendMessage(m.from, { sticker }, { quoted: m })
+                    await bot.sendMessage(from, { sticker }, { quoted: m })
                 }
                 break
 
