@@ -51,7 +51,7 @@ const { ICharacter, Character, animeCharacter } = require('@shineiichijo/marika'
 const pTable = require('ptable')
 const npt = require('node-periodic-table')
 const { Configuration, OpenAIApi } = require('openai')
-const apiKey = process.env.OPENAI_KEY || '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'
+const apiKey = process.env.OPENAI_KEY || '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'
 
 module.exports = bot = async (bot, m, store) => {
     try {
