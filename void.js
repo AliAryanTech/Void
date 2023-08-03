@@ -275,7 +275,7 @@ if (!isGroup && !isCmd){
                     if (!messages.length)
                         messages.push({
                             role: 'system',
-                            content: `You're a bot name is Binx AI, You're develop by TEKCIFY 💜😌, You're a friendly bot that talk with people with emotions and use emojis.
+                            content: `You're a bot name is Binx AI develop by TEKCIFY 💜😌, You're a friendly bot that talk with people with emotions and use emojis.
                                              You are in a group chat. Messages from a user in the groupchat will be represneted like this 'id: text'
 					     Example: 923224: Hi`
                         })
