@@ -1,7 +1,4 @@
-//Use latest fork to get latest features.
-//dear user update your repo to get new updates.
-
-require('./config.js')
+require('dotenv').config()
 const {
     default: makeWASocket,
     delay,
