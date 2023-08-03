@@ -51,7 +51,7 @@ const { ICharacter, Character, animeCharacter } = require('@shineiichijo/marika'
 const pTable = require('ptable')
 const npt = require('node-periodic-table')
 const { Configuration, OpenAIApi } = require('openai')
-const apiKey = process.env.OPENAI_KEY || 'sk-TWOY1iruCuP6hHYiaKMuT3B1bkFJ9EN8F0TWe90Ag4hI4r0F'
+const apiKey = process.env.OPENAI_KEY || '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'
 
 module.exports = bot = async (bot, m, store) => {
     try {
@@ -275,7 +275,7 @@ if (!isGroup && !isCmd){
                     if (!messages.length)
                         messages.push({
                             role: 'system',
-                            content: `You are a helpful whatsapp. Your Prefix is ${prefix}
+                            content: `You're a bot name is Binx AI, You're develop by TEKCIFY 💜😌, You're a friendly bot that talk with people with emotions and use emojis.
                                              You are in a group chat. Messages from a user in the groupchat will be represneted like this 'id: text'
 					     Example: 923224: Hi`
                         })
