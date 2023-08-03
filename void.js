@@ -51,7 +51,7 @@ const { ICharacter, Character, animeCharacter } = require('@shineiichijo/marika'
 const pTable = require('ptable')
 const npt = require('node-periodic-table')
 const { Configuration, OpenAIApi } = require('openai')
-const apiKey = process.env.OPENAI_KEY || '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'
+const apiKey = process.env.OPENAI_KEY || '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'
 
 module.exports = bot = async (bot, m, store) => {
     try {
@@ -291,7 +291,7 @@ if (!isGroup && !isCmd){
                     if (!res) return void reply('An error occured')
                     messages.push(res)
                     messagesMap.set(from, messages)
-                    await reply(res.content)
+                    await reply(res.content.replace(/^Binx AI: /, ''))
                 } catch (error) {
                     console.log(error.message)
                     return void (await reply(
