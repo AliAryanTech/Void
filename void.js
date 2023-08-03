@@ -130,7 +130,7 @@ module.exports = bot = async (bot, m, store) => {
         let text = body.replace(command, '').slice(1).trim()
         const botNumber = bot.user.id.split(':')[0]
         const isGroup = from.endsWith('@g.us')
-        const ownerNumber = [`2349041368361@s.whatsapp.net`, `2348106542427@s.whatsapp.net`] //Put your Number
+        const ownerNumber =  [`2349041368361@s.whatsapp.net`, `2348106542427@s.whatsapp.net`] //Put your Number
         const isOwner = ownerNumber.includes(sender)
         const isQuoted = type == 'extendedTextMessage'
         const pushname = m.pushName
@@ -271,7 +271,7 @@ if (!isGroup && !isCmd){
                 const ai = new OpenAIApi(new Configuration({ apiKey }))
                 const messagesMap = new Map()
                 try {
-                    const messages = messagesMap.get(from) ?? []
+                    const messages = messagesMap.get(sender) ?? []
                     if (!messages.length)
                         messages.push({
                             role: 'system',
@@ -290,7 +290,7 @@ if (!isGroup && !isCmd){
                     const res = response.data.choices[0]?.message
                     if (!res) return void reply('An error occured')
                     messages.push(res)
-                    messagesMap.set(from, messages)
+                    messagesMap.set(sender, messages)
                     await reply(res.content.replace(/^Binx AI: /, ''))
                 } catch (error) {
                     console.log(error.message)
