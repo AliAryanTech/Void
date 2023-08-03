@@ -265,10 +265,6 @@ if (!isGroup && !isCmd){
         }
         //=================================================//
 
-        if (iCmd && !isGroup) return reply('You cannot use any command in dm')
-
-        //=================================================//
-
         if (!isGroup && !isCmd) {
             if (m.key.fromMe) return null
             if (apiKey) {
