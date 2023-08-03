@@ -24,7 +24,7 @@ const crypto = require('crypto')
 const fs = require('fs')
 const rio = require('yt-search')
 const ytdl = require('ytdl-core')
-const { Sticker, createSticker, StickerTypes } = require('wa-sticker-formatter')
+const { Sticker } = require('wa-sticker-formatter')
 const hx = require('hxz-api')
 const canvacord = require('canvacord')
 const {
@@ -53,19 +53,17 @@ const npt = require('node-periodic-table')
 const { Configuration, OpenAIApi } = require('openai')
 const apiKey = process.env.OPENAI_KEY || 'sk-TWOY1iruCuP6hHYiaKMuT3B1bkFJ9EN8F0TWe90Ag4hI4r0F'
 
-module.exports = bot1 = async (bot, m, msg, mek, store) => {
+module.exports = bot = async (bot, m, store) => {
     try {
         global.prefix
         global.blocked
-        const prefix = '!' //put your prefix of your choice
+        const prefix = '/' //put your prefix of your choice
 
         //=================================================//
 
         const { QuickDB } = require('quick.db')
         const db = new QuickDB() // will make a json.sqlite in the root folder
         const tb = db
-
-        const mek = msg
         //=================================================//
 
         //=================================================//
@@ -99,32 +97,32 @@ module.exports = bot1 = async (bot, m, msg, mek, store) => {
         }
 
         //=================================================//
-        const from = mek.key.remoteJid
-        const qmsg = mek.hasQuotedMsg
-        const type = getContentType(msg.message)
+        const from = m.key.remoteJid
+        const qmsg = m.hasQuotedMsg
+        const type = getContentType(m.message)
         const body =
-            type === 'conversation' && mek.message.conversation
-                ? mek.message.conversation
-                : type == 'imageMessage' && mek.message.imageMessage.caption
-                ? mek.message.imageMessage.caption
-                : type == 'documentMessage' && mek.message.documentMessage.caption
-                ? mek.message.documentMessage.caption
-                : type == 'videoMessage' && mek.message.videoMessage.caption
-                ? mek.message.videoMessage.caption
-                : type == 'extendedTextMessage' && mek.message.extendedTextMessage.text
-                ? mek.message.extendedTextMessage.text
-                : type == 'buttonsResponseMessage' && mek.message.buttonsResponseMessage.selectedButtonId
-                ? mek.message.buttonsResponseMessage.selectedButtonId
-                : type == 'templateButtonReplyMessage' && mek.message.templateButtonReplyMessage.selectedId
-                ? mek.message.templateButtonReplyMessage.selectedId
+            type === 'conversation' && m.message.conversation
+                ? m.message.conversation
+                : type == 'imageMessage' && m.message.imageMessage.caption
+                ? m.message.imageMessage.caption
+                : type == 'documentMessage' && m.message.documentMessage.caption
+                ? m.message.documentMessage.caption
+                : type == 'videoMessage' && m.message.videoMessage.caption
+                ? m.message.videoMessage.caption
+                : type == 'extendedTextMessage' && m.message.extendedTextMessage.text
+                ? m.message.extendedTextMessage.text
+                : type == 'buttonsResponseMessage' && m.message.buttonsResponseMessage.selectedButtonId
+                ? m.message.buttonsResponseMessage.selectedButtonId
+                : type == 'templateButtonReplyMessage' && m.message.templateButtonReplyMessage.selectedId
+                ? m.message.templateButtonReplyMessage.selectedId
                 : ''
         const budy =
             type === 'conversation'
-                ? mek.message.conversation
+                ? m.message.conversation
                 : type === 'extendedTextMessage'
-                ? mek.message.extendedTextMessage.text
+                ? m.message.extendedTextMessage.text
                 : ''
-        const sender = mek.key.participant
+        const sender = m.key.participant
         const args = body.trim().split(/ +/).slice(1)
         const ter = args.join(' ')
         const isCmd = body.startsWith(prefix)
@@ -135,15 +133,14 @@ module.exports = bot1 = async (bot, m, msg, mek, store) => {
         const ownerNumber = [`2349041368361@s.whatsapp.net`, `2348106542427@s.whatsapp.net`] //Put your Number
         const isOwner = ownerNumber.includes(sender)
         const isQuoted = type == 'extendedTextMessage'
-        const pushname = mek.pushName
+        const pushname = m.pushName
         const quoted = m.quoted ? m.quoted : m
-
-        const mime = (quoted.msg || m.msg).mimetype || ' '
+        const mime = (quoted.msg || m.msg)?.mimetype || ' '
 
         const isMedia = /image|video|sticker|audio/.test(mime)
 
         const reply = async (teks) => {
-            await bot.sendMessage(from, { text: teks }, { quoted: msg })
+            await bot.sendMessage(from, { text: teks }, { quoted: m })
         }
         const moment = require('moment-timezone')
         const q = args.join(' ')
@@ -173,14 +170,14 @@ module.exports = bot1 = async (bot, m, msg, mek, store) => {
         //=================================================//
         const antipig = JSON.parse(fs.readFileSync('./database/antipig.json'))
         const isAntipig = isGroup ? antipig.includes(from) : false
-        if (isGroup && isAntipig && !mek.key.fromMe) {
+        if (isGroup && isAntipig && !m.key.fromMe) {
             if (sender.match('1')) {
                 reply(`Pig Detected\n@${sender.split('@')[0]}❗`)
                 await bot.groupParticipantsUpdate(from, [sender], 'remove')
             }
         }
 
-        if (isGroup && isAntipig && !mek.key.fromMe) {
+        if (isGroup && isAntipig && !m.key.fromMe) {
             if (sender.match('92')) {
                 reply(`Pig Detected\n@${sender.split('@')[0]}❗`)
 
@@ -188,7 +185,7 @@ module.exports = bot1 = async (bot, m, msg, mek, store) => {
             }
         }
 
-        if (isGroup && isAntipig && !mek.key.fromMe) {
+        if (isGroup && isAntipig && !m.key.fromMe) {
             if (sender.match('212')) {
                 reply(`Pig Detected\n@${sender.split('@')[0]}❗`)
                 await bot.groupParticipantsUpdate(from, [sender], 'remove')
@@ -211,7 +208,7 @@ if (!isGroup && !isCmd){
 
         //========================//
         //ANTILINK
-        if (isGroup && isAntilink && !mek.key.fromMe) {
+        if (isGroup && isAntilink && !m.key.fromMe) {
             if (budy.includes('https://chat.whatsapp.com/')) {
                 if (isGroupAdmins) return reply('Only admin allowed')
                 reply('Group Link Detected!!')
@@ -225,9 +222,9 @@ if (!isGroup && !isCmd){
 
                             fromMe: false,
 
-                            id: mek.key.id,
+                            id: m.key.id,
 
-                            participant: mek.key.participant
+                            participant: m.key.participant
                         }
                     }
                 )
@@ -273,7 +270,7 @@ if (!isGroup && !isCmd){
         //=================================================//
 
         if (!isGroup && !isCmd) {
-            if (mek.key.fromMe) return null
+            if (m.key.fromMe) return null
             if (apiKey) {
                 const ai = new OpenAIApi(new Configuration({ apiKey }))
                 const messagesMap = new Map()
@@ -436,7 +433,7 @@ if (!isGroup && !isCmd){
                         mimetype: 'audio/mpeg',
                         mediaUploadTimeoutMs: 1000 * 30
                     },
-                    { quoted: msg }
+                    { quoted: m }
                 )
                 fs.unlinkSync(`./${randomName}`)
 
@@ -1025,7 +1022,7 @@ if (!isGroup && !isCmd){
                         bot.sendMessage(
                             from,
                             { image: { url: data.sprites.front_default }, caption: yu },
-                            { quoted: mek }
+                            { quoted: m }
                         )
                     } catch (err) {
                         reply('An Error Occurred')
@@ -1056,7 +1053,7 @@ let buttons = [
                         // buttons: buttons,
                         // headerType: 4
                     }
-                    bot.sendMessage(from, buttonMessage, { quoted: mek })
+                    bot.sendMessage(from, buttonMessage, { quoted: m })
                 }
                 break
 
@@ -1078,7 +1075,7 @@ let buttons = [
             buttons: buttons,
             headerType: 2  */
                     }
-                    bot.sendMessage(from, buttonMessage, { quoted: mek })
+                    bot.sendMessage(from, buttonMessage, { quoted: m })
                 }
                 break
 
@@ -1171,7 +1168,7 @@ let buttons = [
                 break
 
             case 'getcase':
-                if (mek.sender != '2349041368361@s.whatsapp.net') {
+                if (m.sender != '2349041368361@s.whatsapp.net') {
                     return
                 }
                 const getCase = (cases) => {
@@ -1196,11 +1193,11 @@ let buttons = [
                     if (text.length > 300) return reply(`Are you trying to send virus!`)
                     const txtmsg = `*📮 Report Message*\n\\n\n*Group Name ➛* ${groupName}\n\n*Message ➛*  ${text}`
                     //for (let mod of global.Owner.map(v => v.replace(/[^0-9]/g, '') + '@s.whatsapp.net').filter(v => v != '2349041368361@s.whatsapp.net'))
-                    await bot.sendMessage(`${ownerNumber}`, { text: `${txtmsg}` }, { quoted: mek })
+                    await bot.sendMessage(`${ownerNumber}`, { text: `${txtmsg}` }, { quoted: m })
                     await bot.sendMessage(
                         `120363138117624616@g.us`,
                         { text: `${txtmsg}`, mentions: groupAdmins },
-                        { quoted: mek }
+                        { quoted: m }
                     )
                     reply(
                         `*✅ Your Report has been submitted Successfully to Support group & Owner*\n\n*You will get response shortly ♥️*`
@@ -1225,7 +1222,7 @@ let buttons = [
                             caption: '',
                             gifPlayback: true
                         },
-                        { quoted: mek }
+                        { quoted: m }
                     )
                 } catch (err) {
                     reply('No gif found')
@@ -1250,13 +1247,13 @@ let buttons = [
                 {
                     if (!isGroupAdmins && !isOwner) return reply('Only Admins...')
 
-                    if (!msg.message.extendedTextMessage) {
+                    if (!m.message.extendedTextMessage) {
                         await reply('❌ Tag message to delete.')
                         return
                     }
 
                     {
-                        const quotedMessage = msg.message.extendedTextMessage.contextInfo.quotedMessage
+                        const quotedMessage = m.message.extendedTextMessage.contextInfo.quotedMessage
                         if (
                             (quotedMessage.extendedTextMessage &&
                                 quotedMessage.extendedTextMessage.text.includes('Birthday')) ||
@@ -1270,7 +1267,7 @@ let buttons = [
                             const options = {
                                 remoteJid: from,
                                 fromMe: true,
-                                id: msg.message.extendedTextMessage.contextInfo.stanzaId
+                                id: m.message.extendedTextMessage.contextInfo.stanzaId
                             }
                             await bot.sendMessage(from, {
                                 delete: options
@@ -1289,8 +1286,8 @@ let buttons = [
                     const options = {
                         remoteJid: from,
                         fromMe: false,
-                        id: msg.message.extendedTextMessage.contextInfo.stanzaId,
-                        participant: msg.message.extendedTextMessage.contextInfo.participant
+                        id: m.message.extendedTextMessage.contextInfo.stanzaId,
+                        participant: m.message.extendedTextMessage.contextInfo.participant
                     }
                     await bot.sendMessage(from, {
                         delete: options
@@ -1319,7 +1316,7 @@ let buttons = [
  buttons: buttons,
  headerType: 4, */
                                 }
-                                bot.sendMessage(from, buttonMessage, { quoted: mek })
+                                bot.sendMessage(from, buttonMessage, { quoted: m })
                             })
                             .catch((_) => _)
                     } catch {
@@ -1471,7 +1468,7 @@ Ohh i see 👀💖...`
                 ]
                 const lexdareww = dare[Math.floor(Math.random() * dare.length)]
                 //buffer = await axios.get(`https://images4.alphacoders.com/101/1016619.jpg`)
-                //await reply(from, { image: buffer, caption: '*You have chosen Dare...*\n\n'+ lexdareww }, {quoted:mek})
+                //await reply(from, { image: buffer, caption: '*You have chosen Dare...*\n\n'+ lexdareww }, {quoted:m})
                 await reply(lexdareww)
                 break
 
@@ -1569,7 +1566,7 @@ Ohh i see 👀💖...`
                 ]
                 const lextruthww = truth[Math.floor(Math.random() * truth.length)]
                 //  buffer = await getBuffer(`https://images2.alphacoders.com/650/650812.jpg`)
-                //   bot.sendMessage(from, { image: buffer, caption: '*You have chosen Truth...*\n'+ lextruthww }, {quoted:mek})
+                //   bot.sendMessage(from, { image: buffer, caption: '*You have chosen Truth...*\n'+ lextruthww }, {quoted:m})
                 await reply(lextruthww)
                 break
 
@@ -1602,14 +1599,14 @@ Ohh i see 👀💖...`
             case '_':
                 if (!isOwner) return reply('Only Legions can use.')
                 if (!isGroup) return reply('this feature is only for groups')
-                if (mek.message.extendedTextMessage === undefined || mek.message.extendedTextMessage === null)
+                if (m.message.extendedTextMessage === undefined || m.message.extendedTextMessage === null)
                     return reply('Tag the target you want to kick!')
-                mentioned = mek.message.extendedTextMessage.contextInfo.mentionedJid
+                mentioned = m.message.extendedTextMessage.contextInfo.mentionedJid
                 if (mentioned.length > 1) {
                     bot.groupParticipantsUpdate(from, [mentioned], 'remove')
                     reply('DONE!')
                 } else if (mentioned.length < 1) {
-                    anu = mek.message.extendedTextMessage.contextInfo.participant
+                    anu = m.message.extendedTextMessage.contextInfo.participant
                     bot.groupParticipantsUpdate(from, [anu], 'remove')
                     reply('DONE!')
                 } else {
@@ -1623,14 +1620,14 @@ Ohh i see 👀💖...`
             case 'error':
                 if (!isGroup) return reply('this feature is only for groups')
                 if (!isGroupAdmins) return reply('Only Admins are allowed to use this Cmd')
-                if (mek.message.extendedTextMessage === undefined || mek.message.extendedTextMessage === null)
+                if (m.message.extendedTextMessage === undefined || m.message.extendedTextMessage === null)
                     return reply('Tag the target you want to kick!')
-                mentioned = mek.message.extendedTextMessage.contextInfo.mentionedJid
+                mentioned = m.message.extendedTextMessage.contextInfo.mentionedJid
                 if (mentioned.length > 1) {
                     bot.groupParticipantsUpdate(from, [mentioned], 'remove')
                     reply('DONE!')
                 } else if (mentioned.length < 1) {
-                    anu = mek.message.extendedTextMessage.contextInfo.participant
+                    anu = m.message.extendedTextMessage.contextInfo.participant
                     bot.groupParticipantsUpdate(from, [anu], 'remove')
                     reply('DONE!')
                 } else {
@@ -1645,10 +1642,10 @@ Ohh i see 👀💖...`
                     if (!isGroup) return reply('this feature is only for groups')
                     if (!isGroupAdmins) return reply('Only Admins are allowed to use this Cmd')
                     //if(!isBotGroupAdmins) return reply('Bot Not Admin...')
-                    if (mek.message.extendedTextMessage === undefined || mek.message.extendedTextMessage === null)
+                    if (m.message.extendedTextMessage === undefined || m.message.extendedTextMessage === null)
                         return reply('Tag the target you want to promote!')
 
-                    mentioned = mek.message.extendedTextMessage.contextInfo.mentionedJid
+                    mentioned = m.message.extendedTextMessage.contextInfo.mentionedJid
 
                     if (mentioned.length > 1) {
                         bot.groupParticipantsUpdate(from, [mentioned], 'promote')
@@ -1656,7 +1653,7 @@ Ohh i see 👀💖...`
 
                         reply('DONE!')
                     } else if (mentioned.length < 1) {
-                        anu = mek.message.extendedTextMessage.contextInfo.participant
+                        anu = m.message.extendedTextMessage.contextInfo.participant
                         bot.groupParticipantsUpdate(from, [anu], 'promote')
                         //bot.groupRemove(from, [anu]);
 
@@ -1697,10 +1694,10 @@ Ohh i see 👀💖...`
                     if (!isGroup) return reply('this feature is only for groups')
                     if (!isGroupAdmins) return reply('Only Admins are allowed to use this Cmd')
                     // if(!isBotGroupAdmins) return reply('Bot Not Admin...')
-                    if (mek.message.extendedTextMessage === undefined || mek.message.extendedTextMessage === null)
+                    if (m.message.extendedTextMessage === undefined || m.message.extendedTextMessage === null)
                         return reply('Tag the target you want to demote!')
 
-                    mentioned = mek.message.extendedTextMessage.contextInfo.mentionedJid
+                    mentioned = m.message.extendedTextMessage.contextInfo.mentionedJid
 
                     if (mentioned.length > 1) {
                         bot.groupParticipantsUpdate(from, [mentioned], 'demote')
@@ -1708,7 +1705,7 @@ Ohh i see 👀💖...`
 
                         reply('DONE!')
                     } else if (mentioned.length < 1) {
-                        anu = mek.message.extendedTextMessage.contextInfo.participant
+                        anu = m.message.extendedTextMessage.contextInfo.participant
                         bot.groupParticipantsUpdate(from, [anu], 'demote')
                         //bot.groupRemove(from, [anu]);
 
@@ -1727,7 +1724,7 @@ Ohh i see 👀💖...`
                 {
                     if (!isGroup) return reply('this feature is only for groups')
                     if (!isGroupAdmins) return reply('Only Admins are allowed to use this Cmd')
-                    let users = mek.quoted ? mek.quoted.sender : text.replace(/[^0-9]/g, '') + '@s.whatsapp.net'
+                    let users = m.quoted ? m.quoted.sender : text.replace(/[^0-9]/g, '') + '@s.whatsapp.net'
                     if (users.length == 0)
                         return reply(`Please write the number of the person you want to add to this group`)
                     await bot
@@ -1783,7 +1780,7 @@ Ohh i see 👀💖...`
                     caption: profilexx,
                     headerType: 4
                 }
-                bot.sendMessage(from, buttonMessage, { quoted: mek })
+                bot.sendMessage(from, buttonMessage, { quoted: m })
 
                 break
 
@@ -1846,7 +1843,7 @@ Ohh i see 👀💖...`
                                 fileName: titleYt + '.mp3',
                                 mimetype: 'audio/mpeg'
                             },
-                            { quoted: mek }
+                            { quoted: m }
                         )
                     } else {
                         reply(`❌ File size bigger than 40mb.`)
@@ -1901,7 +1898,7 @@ Ohh i see 👀💖...`
                                 video: fs.readFileSync(`./Mp4/${randomName}`),
                                 caption: `${titleYt}`
                             },
-                            { quoted: mek }
+                            { quoted: m }
                         )
                     } else {
                         reply(`❌ File size bigger than 40mb.`)
@@ -1933,7 +1930,7 @@ Ohh i see 👀💖...`
                     menText += `${emo} *@${memNum.id.split('@')[0]}*\n`
                     //members_id.push(memNum.jid)
                 }
-                bot.sendMessage(from, { text: menText, mentions: participants.map((a) => a.id) }, { quoted: mek })
+                bot.sendMessage(from, { text: menText, mentions: participants.map((a) => a.id) }, { quoted: m })
                 break
 
             case 'bc':
@@ -2018,11 +2015,7 @@ Ohh i see 👀💖...`
                     if (!isGroup) return reply('This command can only be used in group!')
                     if (!isOwner) return reply('Owner Only...')
 
-                    bot.sendMessage(
-                        from,
-                        { text: q ? q : '', mentions: participants.map((a) => a.id) },
-                        { quoted: mek }
-                    )
+                    bot.sendMessage(from, { text: q ? q : '', mentions: participants.map((a) => a.id) }, { quoted: m })
                 }
                 break
 
@@ -2054,7 +2047,7 @@ Ohh i see 👀💖...`
                                 }
                             }
                         },
-                        { quoted: mek, detectLink: true }
+                        { quoted: m, detectLink: true }
                     )
                 }
                 break
@@ -2078,7 +2071,7 @@ Ohh i see 👀💖...`
 
             case 'join':
                 {
-                    if (!isOwner && !mek.key.fromMe) return reply('Only owner can use this feature')
+                    if (!isOwner && !m.key.fromMe) return reply('Only owner can use this feature')
                     if (!ter) return reply('Please provide the group link')
                     let result = args[0].split('https://chat.whatsapp.com/')[1]
                     await bot
@@ -2190,7 +2183,7 @@ Ohh i see 👀💖...`
 📝 *Content:* ${quoo.data.quote.body}
 *✍️ Author:* ${quoo.data.quote.author}
               `
-                    bot.sendMessage(from, { text: reply }, { quoted: mek })
+                    bot.sendMessage(from, { text: reply }, { quoted: m })
                 } catch (err) {
                     console.log(err)
                     return reply(`* Something went wrong.*`)
