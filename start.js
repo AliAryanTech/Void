@@ -52,12 +52,16 @@ async function connectToWhatsApp() {
             console.log('Connected to WhatsApp')
         }
         if (connection === 'close') {
-            let reason = new Boom(lastDisconnect?.error)?.output.statusCode
-            console.log(`Connection closed: ${reason}`)
-            if (reason === DisconnectReason.loggedOut) {
+            const reason = new Boom(lastDisconnect?.error)?.output.statusCode
+            if (reason !== DisconnectReason.loggedOut) {
+                console.log('Connecting...')
+                setTimeout(() => connectToWhatsApp(), 3000)
+            } else {
+                console.log('Disconnected. Deleting session')
                 await fs.remove('session')
+                console.log('Restarting...')
+                setTimeout(() => connectToWhatsApp(), 3000)
             }
-            connectToWhatsApp()
         }
     })
 
